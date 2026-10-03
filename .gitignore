@@ -1,0 +1,14 @@
+# Local runtime data (DB files, uploaded employee documents)
+backend/data/
+backend/uploads/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
