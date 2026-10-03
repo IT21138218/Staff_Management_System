@@ -1,0 +1,496 @@
+/* Staff Management System - design system on top of Bootstrap 5 */
+
+:root {
+  --sms-primary: #4f46e5;
+  --sms-primary-dark: #4338ca;
+  --sms-primary-light: #eef2ff;
+  --sms-accent: #0d9488;
+  --sms-ink: #0f172a;
+  --sms-muted: #64748b;
+  --sms-border: #e6e8f0;
+  --sms-bg: #f6f7fb;
+  --sms-surface: #ffffff;
+  --sms-radius: 14px;
+  --sms-radius-sm: 10px;
+  --sms-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -14px rgba(15, 23, 42, 0.12);
+  --sms-shadow-hover: 0 4px 10px rgba(15, 23, 42, 0.06), 0 16px 32px -14px rgba(15, 23, 42, 0.18);
+  --sms-shadow-pop: 0 12px 32px -8px rgba(15, 23, 42, 0.22);
+  --sms-sidebar-w: 264px;
+  --sms-topbar-h: 64px;
+
+  /* Bootstrap variable overrides so every stock component (buttons, badges,
+     tables, forms) inherits the new look with no markup changes */
+  --bs-primary: var(--sms-primary);
+  --bs-primary-rgb: 79, 70, 229;
+  --bs-link-color: var(--sms-primary);
+  --bs-link-hover-color: var(--sms-primary-dark);
+  --bs-body-bg: var(--sms-bg);
+  --bs-body-color: var(--sms-ink);
+  --bs-body-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --bs-border-color: var(--sms-border);
+  --bs-border-radius: var(--sms-radius-sm);
+  --bs-border-radius-lg: var(--sms-radius);
+  --bs-border-radius-sm: 8px;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-color: var(--sms-bg);
+  color: var(--sms-ink);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--sms-ink);
+}
+
+/* =====================================================
+   App shell: fixed sidebar + topbar + scrolling content
+   ===================================================== */
+.sms-app-shell {
+  min-height: 100vh;
+}
+
+/* ---------- Sidebar ---------- */
+.sms-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: var(--sms-sidebar-w);
+  background: var(--sms-surface);
+  border-right: 1px solid var(--sms-border);
+  display: flex;
+  flex-direction: column;
+  z-index: 1040;
+  overflow-y: auto;
+  transition: transform 0.2s ease;
+}
+.sms-sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 1.15rem 1.25rem;
+  border-bottom: 1px solid var(--sms-border);
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--sms-ink);
+  letter-spacing: -0.01em;
+}
+.sms-sidebar-brand img {
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+.sms-sidebar-nav {
+  padding: 0.75rem 0.75rem 1.5rem;
+  flex: 1;
+}
+.sms-nav-section {
+  margin-bottom: 0.4rem;
+}
+.sms-nav-section-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--sms-muted);
+  padding: 0.9rem 0.6rem 0.35rem;
+}
+.sms-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 8px;
+  color: #334155;
+  font-weight: 500;
+  font-size: 0.89rem;
+  text-decoration: none;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+.sms-nav-item i {
+  width: 18px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--sms-muted);
+  transition: color 0.12s ease;
+}
+.sms-nav-item:hover {
+  background-color: #f1f2f8;
+  color: var(--sms-ink);
+}
+.sms-nav-item.active {
+  background-color: var(--sms-primary-light);
+  color: var(--sms-primary-dark);
+  font-weight: 600;
+}
+.sms-nav-item.active i {
+  color: var(--sms-primary);
+}
+
+.sms-sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  z-index: 1035;
+  display: none;
+}
+
+/* ---------- Main column ---------- */
+.sms-main {
+  margin-left: var(--sms-sidebar-w);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.sms-content {
+  padding: 1.75rem 2rem 2.5rem;
+  flex: 1;
+}
+
+/* ---------- Topbar ---------- */
+.sms-topbar {
+  height: var(--sms-topbar-h);
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0 1.5rem;
+  background: rgba(246, 247, 251, 0.85);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--sms-border);
+}
+.sms-sidebar-toggle {
+  display: none;
+  border: none;
+  background: transparent;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  color: var(--sms-ink);
+  font-size: 1rem;
+}
+.sms-sidebar-toggle:hover {
+  background-color: #eceef5;
+}
+.sms-topbar-spacer {
+  flex: 1;
+}
+.sms-icon-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  color: var(--sms-muted);
+  font-size: 1rem;
+  text-decoration: none;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+.sms-icon-btn:hover {
+  background-color: #eceef5;
+  color: var(--sms-ink);
+}
+.sms-badge-dot {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 3px;
+  border-radius: 999px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--sms-bg);
+}
+
+/* ---------- User menu (custom dropdown, no Bootstrap JS) ---------- */
+.sms-user-menu {
+  position: relative;
+}
+.sms-user-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  border: 1px solid transparent;
+  background: transparent;
+  padding: 0.3rem 0.5rem 0.3rem 0.3rem;
+  border-radius: 999px;
+  transition: background-color 0.12s ease, border-color 0.12s ease;
+}
+.sms-user-trigger:hover {
+  background-color: #eceef5;
+}
+.sms-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--sms-primary), var(--sms-primary-dark));
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+.sms-avatar-img {
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.sms-user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.15;
+}
+.sms-user-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--sms-ink);
+}
+.sms-user-role {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--sms-muted);
+}
+.sms-chevron {
+  font-size: 0.7rem;
+  color: var(--sms-muted);
+  margin-left: 0.1rem;
+}
+.sms-user-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  width: 230px;
+  background: var(--sms-surface);
+  border-radius: var(--sms-radius-sm);
+  box-shadow: var(--sms-shadow-pop);
+  border: 1px solid var(--sms-border);
+  padding: 0.4rem;
+  z-index: 1050;
+}
+.sms-user-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: transparent;
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: var(--sms-ink);
+  text-decoration: none;
+}
+.sms-user-dropdown-item i {
+  width: 16px;
+  color: var(--sms-muted);
+}
+.sms-user-dropdown-item:hover {
+  background-color: var(--sms-primary-light);
+  color: var(--sms-primary-dark);
+}
+.sms-user-dropdown-item:hover i {
+  color: var(--sms-primary-dark);
+}
+.sms-user-dropdown-divider {
+  height: 1px;
+  background: var(--sms-border);
+  margin: 0.3rem 0.2rem;
+}
+
+/* ---------- Responsive: collapse sidebar below 992px ---------- */
+@media (max-width: 991.98px) {
+  .sms-sidebar {
+    transform: translateX(-100%);
+    box-shadow: var(--sms-shadow-pop);
+  }
+  .sms-sidebar.sms-sidebar-open {
+    transform: translateX(0);
+  }
+  .sms-sidebar-backdrop {
+    display: block;
+  }
+  .sms-main {
+    margin-left: 0;
+  }
+  .sms-sidebar-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sms-content {
+    padding: 1.25rem 1.1rem 2rem;
+  }
+  .sms-user-info {
+    display: none;
+  }
+}
+
+/* =====================================================
+   Shared components (cards, tables, badges, forms, etc.)
+   ===================================================== */
+
+.card-stat {
+  border: none;
+  border-radius: var(--sms-radius);
+  box-shadow: var(--sms-shadow);
+  background: var(--sms-surface);
+  transition: box-shadow 0.2s ease;
+}
+.card-stat:hover {
+  box-shadow: var(--sms-shadow-hover);
+}
+.card-stat .card-body {
+  padding: 1.5rem;
+}
+.card-stat .stat-value {
+  font-size: 2.1rem;
+  font-weight: 800;
+  color: var(--sms-ink);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.card-stat h5.card-title,
+.card-stat h5 {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+.card-stat h6.text-muted {
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--sms-muted) !important;
+}
+
+/* Page heading row (the <h3> at the top of every page) */
+.sms-content > div > h3:first-child,
+.sms-content > div > div:first-child > h3 {
+  font-size: 1.35rem;
+  margin-bottom: 1.25rem;
+}
+
+.badge {
+  font-weight: 600;
+  padding: 0.4em 0.75em;
+  border-radius: 999px;
+  letter-spacing: 0.01em;
+}
+.badge-role {
+  background-color: var(--sms-primary-light);
+  color: var(--sms-primary-dark);
+}
+
+.table {
+  --bs-table-bg: transparent;
+  margin-bottom: 0;
+}
+.table thead th {
+  color: var(--sms-muted);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--sms-border);
+  padding-top: 0.4rem;
+  padding-bottom: 0.75rem;
+}
+.table tbody td {
+  border-bottom: 1px solid var(--sms-border);
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
+  vertical-align: middle;
+}
+.table-hover tbody tr:hover {
+  background-color: var(--sms-primary-light);
+}
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.btn {
+  font-weight: 600;
+  border-radius: var(--bs-border-radius-sm);
+  padding: 0.5rem 1.1rem;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.15s ease;
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--sms-primary), var(--sms-primary-dark));
+  border: none;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+}
+.btn-primary:hover {
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
+}
+.btn-sm {
+  border-radius: 8px;
+}
+
+.form-label {
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--sms-ink);
+  margin-bottom: 0.35rem;
+}
+.form-control, .form-select {
+  border-color: var(--sms-border);
+  border-radius: var(--bs-border-radius-sm);
+  padding: 0.55rem 0.85rem;
+}
+.form-control:focus, .form-select:focus {
+  border-color: var(--sms-primary);
+  box-shadow: 0 0 0 3px var(--sms-primary-light);
+}
+
+.auth-page {
+  background:
+    radial-gradient(circle at 15% 15%, rgba(129, 140, 248, 0.35), transparent 45%),
+    radial-gradient(circle at 85% 85%, rgba(13, 148, 136, 0.3), transparent 45%),
+    linear-gradient(135deg, #1e1b4b, #312e81 45%, #4338ca);
+  min-height: 100vh;
+}
+.auth-page .card {
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px -12px rgba(15, 23, 42, 0.5);
+}
+
+.list-group-item {
+  border-color: var(--sms-border);
+  padding: 1rem 1.1rem;
+}
+.list-group {
+  border-radius: var(--sms-radius);
+  overflow: hidden;
+  box-shadow: var(--sms-shadow);
+}
+
+footer.app-footer {
+  color: var(--sms-muted);
+  font-size: 0.8rem;
+}

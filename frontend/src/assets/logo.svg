@@ -1,0 +1,13 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sms-logo-bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4f46e5"/>
+      <stop offset="1" stop-color="#312e81"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="url(#sms-logo-bg)"/>
+  <circle cx="24" cy="24" r="7" fill="#ffffff"/>
+  <circle cx="41" cy="27" r="5.5" fill="#c7d2fe"/>
+  <path d="M12 46c1.2-8 6-12.5 12-12.5S34.8 38 36 46" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+  <path d="M33 40c1-4.5 4-7 8-7s7 2.5 8 7" stroke="#c7d2fe" stroke-width="3.2" stroke-linecap="round"/>
+</svg>
